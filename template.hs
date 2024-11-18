@@ -14,9 +14,15 @@ stageToSymbol stage
     | stage == 3 = 'O'  -- Young plant
     | otherwise = '@'   -- Mature plant
 
+driedOutSymbol :: Char
+driedOutSymbol = 'X'  -- Dead plant
+
 printGarden :: Garden Int -> IO ()
-printGarden (Garden plants _) = do
-    let symbolGrid = map (map stageToSymbol) plants
-    mapM_ putStrLn (map unwordsChars symbolGrid)
+printGarden (Garden plants waterLevel) = do
+    let symbolGrid = 
+          if waterLevel < 0
+              then map (map (const driedOutSymbol)) plants  -- All plants look dried out
+              else map (map stageToSymbol) plants           -- Normal visualization
+    mapM_ (putStrLn . unwordsChars) symbolGrid
   where
     unwordsChars = concatMap (: " ")
